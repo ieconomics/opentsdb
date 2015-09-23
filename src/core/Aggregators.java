@@ -66,6 +66,15 @@ public final class Aggregators {
   public static final Aggregator MIMMAX = new Max(
       Interpolation.MIN, "mimmax");
   
+  /** Aggregator that has the first data point */
+  public static final Aggregator FIRST = new First(
+      Interpolation.LERP, "first");
+  /** Aggregator that sums up all the data points. */
+  
+  /** Aggregator that has the last data point */
+  public static final Aggregator LAST = new Last(
+      Interpolation.LERP, "last");
+  
   /** Maps an aggregator name to its instance. */
   private static final HashMap<String, Aggregator> aggregators;
 
@@ -79,6 +88,8 @@ public final class Aggregators {
     aggregators.put("zimsum", ZIMSUM);
     aggregators.put("mimmin", MIMMIN);
     aggregators.put("mimmax", MIMMAX);
+    aggregators.put("first", FIRST);
+    aggregators.put("last", LAST);
   }
 
   private Aggregators() {
@@ -331,5 +342,75 @@ public final class Aggregators {
     }
     
   }
+  
+  private static final class First implements Aggregator {
+	    private final Interpolation method;
+	    private final String name;
+	    
+	    public First(final Interpolation method, final String name) {
+	      this.method = method;
+	      this.name = name;
+	    }
+	    
+	    public long runLong(final Longs values) {
+		      long result = values.nextLongValue();
+		      while (values.hasNextValue()) {
+		        values.nextLongValue();
+		      }
+		      return result;
+		    }
+
+		    public double runDouble(final Doubles values) {
+		      double result = values.nextDoubleValue();
+		      while (values.hasNextValue()) {
+		        values.nextDoubleValue();
+		      }
+		      return result;
+		    }
+
+	    public String toString() {
+	      return name;
+	    }
+
+	    public Interpolation interpolationMethod() {
+	      return method;
+	    }
+	    
+	  }
+  
+  private static final class Last implements Aggregator {
+	    private final Interpolation method;
+	    private final String name;
+	    
+	    public Last(final Interpolation method, final String name) {
+	      this.method = method;
+	      this.name = name;
+	    }
+	    
+	    public long runLong(final Longs values) {
+	      long result = values.nextLongValue();
+	      while (values.hasNextValue()) {
+	        result = values.nextLongValue();
+	      }
+	      return result;
+	    }
+
+	    public double runDouble(final Doubles values) {
+	      double result = values.nextDoubleValue();
+	      while (values.hasNextValue()) {
+	        result = values.nextDoubleValue();
+	      }
+	      return result;
+	    }
+
+	    public String toString() {
+	      return name;
+	    }
+
+	    public Interpolation interpolationMethod() {
+	      return method;
+	    }
+	    
+	  }
 
 }
